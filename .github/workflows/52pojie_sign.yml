@@ -1,0 +1,33 @@
+# .github/workflows/52pojie_sign.yml
+name: 吾爱破解每日签到
+
+# 触发条件：1) 每天 08:30（UTC 00:30） 2) 手动点击 Run workflow
+on:
+  schedule:
+    - cron: '30 0 * * *'   # UTC 00:30 = 北京时间 08:30
+  workflow_dispatch:
+
+jobs:
+  signin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout 仓库
+        uses: actions/checkout@v4
+
+      - name: 设置 Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 运行签到脚本
+        env:
+          PJ52_TOKEN: ${{ secrets.PJ52_TOKEN }}
+          PJ52_COOKIE: ${{ secrets.PJ52_COOKIE }}
+        run: python main.py
